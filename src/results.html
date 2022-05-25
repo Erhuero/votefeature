@@ -1,0 +1,184 @@
+
+   
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorkAdventure poll</title>
+    <style>
+        body {
+            font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+            line-height: 20px;
+            color: #fff;
+        }
+        .poll-results {
+            background: #292929;
+            border-radius: 8px 8px 0 0;
+            border: 1px solid #666;
+            padding: 5px 10px 5px 10px;
+        }
+        .poll-header {
+            margin-bottom: 5px;
+        }
+        .poll-question {
+            font-weight: 600;
+        }
+        .poll-result-list {
+            list-style-type: none;
+        }
+        .poll-answer-header {
+            list-style-type: none;
+            margin-right: 20px;
+            display: flex;
+            justify-content: space-between;
+            float: left;
+        }
+        .poll-answer-vote-name {
+            list-style-type: none;
+            flex-shrink: 1;
+            overflow-wrap: anywhere;
+        }
+        .poll-answer-short-results {
+            list-style-type: none;
+            display: flex;
+            min-width: 10em;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .poll-bar-container {
+            list-style-type: none;
+            border-radius: 2px;
+            height: 8px;
+            background-color: #616161;
+            max-width: 160px;
+            margin-top: 3px;
+            flex: 1;
+        }
+        .poll-bar {
+            list-style-type: none;
+            border-radius: 2px;
+            height: 8px;
+            background-color: #d2d7df;
+            width: 50%;
+        }
+        #poll-bar-vote-a {
+            background-color: #04F17A;
+        }
+        #poll-bar-vote-b {
+            background-color: #315DFF;
+        }
+        #poll-bar-vote-c {
+            background-color: #F9E81E;
+        }
+        #poll-bar-vote-d {
+            background-color: #FF475A;
+        }
+        .poll-answer-vote-count-container {
+            list-style-type: none;
+            display: flex;
+        }
+        .poll-answer-vote-count {
+            list-style-type: none;
+            margin-left: 10px;
+            white-space: nowrap;
+            flex: 1;
+            text-align: right;
+        }
+        </style>
+        <script src="https://play.workadventu.re/iframe_api.js"></script>
+        <script>
+
+            let votePremier, voteSecond, voteTroisieme, voteQuatrieme, totalVotes;
+            WA.onInit().then(() => {   
+                WA.state.onVariableChange('votePremier').subscribe((newValue) => {
+                    updatePoll(newValue, voteSecond, voteTroisieme, voteQuatrieme)
+                });
+
+                WA.state.onVariableChange('voteSecond').subscribe((newValue) => {
+                    updatePoll(votePremier, newValue, voteTroisieme, voteQuatrieme)
+                });
+
+                WA.state.onVariableChange('voteTroisieme').subscribe((newValue) => {
+                    updatePoll(votePremier, voteSecond, newValue, voteQuatrieme)
+                });
+
+                WA.state.onVariableChange('voteQuatrieme').subscribe((newValue) => {
+                    updatePoll(votePremier, voteSecond, voteTroisieme, newValue)
+            });
+        });
+
+            function updatePoll(newvotePremier = 0, newvoteSecond = 0, newvoteTroisieme = 0, newvoteQuatrieme = 0){
+                votePremier = newvotePremier;
+                voteSecond = newvoteSecond;
+                voteTroisieme = newvoteTroisieme;
+                voteQuatrieme = newvoteQuatrieme;
+                totalVotes = votePremier + voteSecond + voteTroisieme + voteQuatrieme;
+
+                document.getElementById("votePremier").innerHTML = totalVotes > 0 ? votePremier : 0;   
+                document.getElementById("voteSecond").innerHTML = totalVotes > 0 ? voteSecond : 0;   
+                document.getElementById("voteTroisieme").innerHTML = totalVotes > 0 ? voteTroisieme : 0;   
+                document.getElementById("voteQuatrieme").innerHTML = totalVotes > 0 ? voteQuatrieme : 0;
+                document.getElementById("totalVotes").innerHTML = totalVotes > 0 ? totalVotes :0;
+                
+                let percentageVotePremier = totalVotes > 0 ? parseInt(votePremier/totalVotes * 100) + "%" : "0%";
+                let percentageVoteSecond = totalVotes > 0 ? parseInt(voteSecond/totalVotes * 100) + "%" : "0%";
+                let percentageVoteTroisieme = totalVotes > 0 ? parseInt(voteTroisieme/totalVotes * 100) + "%" : "0%";
+                let percentageVoteQuatrieme = totalVotes > 0 ? parseInt(voteQuatrieme/totalVotes * 100) + "%" : "0%";
+
+                document.getElementById("percentageFirstVote").innerHTML = document.getElementById("poll-bar-vote-a").style.width = percentageVotePremier;
+                document.getElementById("percentageVoteSecond").innerHTML = document.getElementById("poll-bar-vote-b").style.width = percentageVoteSecond;
+                document.getElementById("percentageVoteTroisieme").innerHTML = document.getElementById("poll-bar-vote-c").style.width = percentageVoteTroisieme;
+                document.getElementById("percentageVoteQuatrieme").innerHTML = document.getElementById("poll-bar-vote-d").style.width = percentageVoteQuatrieme;
+            }
+        </script>
+    </head>
+    <body>
+        <div class="poll-results">
+            <div class="poll-header">
+                <div>
+                    <strong class = "poll-question">Resultats du vote</strong> <span>(<span id = "totalVotes">0</span> votes)</span>
+                </div>
+            </div>
+            <ol class="poll-result-list">
+                <li>
+                    <div class = "poll-answer-header"><span class ="poll-answer-vote-name">Zone A</span></div>
+                    <div class="poll-answer-short-results">
+                        <span class = "poll-bar-container"><div class= "poll-bar" id = "poll-bar-vote-a" style="width: 0%;"></div></span>
+                        <div class="poll-answer-vote-count-container">
+                            <span class = "poll-answer-vote-count">(<span id = "votePremier">0</span>)<span id = "percentageVotePremier">0%</span></span>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class = "poll-answer-header"><span class ="poll-answer-vote-name">Zone B</span></div>
+                    <div class="poll-answer-short-results">
+                        <span class = 'poll-bar-container'><div class= "poll-bar" id = "poll-bar-vote-b" style = "width:0%;"></div></span>
+                        <div class="poll-answer-vote-count-container">
+                            <span class = "poll-answer-vote-count">(<span id = "voteSecond">0</span>)<span id = "percentageVoteSecond">0%</span></span>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class = "poll-answer-header"><span class ="poll-answer-vote-name">Zone C</span></div>
+                    <div class="poll-answer-short-results">
+                        <span class = "poll-bar-container"><div class= "poll-bar" id = "poll-bar-vote-c" style = "width:0%;"></div></span>
+                        <div class="poll-answer-vote-count-container">
+                            <span class = "poll-answer-vote-count">(<span id = "voteTroisieme">0</span>)<span id = "percentageVoteTroisieme">0%</span></span>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class = "poll-answer-header"><span class ="poll-answer-vote-name">Zone D</span></div>
+                    <div class="poll-answer-short-results">
+                        <span class = "poll-bar-container"><div class= "poll-bar" id = "poll-bar-vote-d" style = "width:0%;"></div></span>
+                        <div class="poll-answer-vote-count-container">
+                            <span class = "poll-answer-vote-count">(<span id = "voteQuatrieme">0</span>)<span id = "percentageVoteQuatrieme">0%</span></span>
+                        </div>
+                    </div>
+                </li>
+            </ol>
+        </div>
+    </body>
+</html>
